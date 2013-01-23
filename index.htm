@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Maps Mandelbrot</title>
+    <meta content='initial-scale=1.0, user-scalable=no' name='viewport'>
+    <style type='text/css'>
+      /*<![CDATA[*/
+      body, html, #map_canvas {
+        height: 100%;
+        margin: 0;
+        padding: 0; }
+      /*]]>*/
+    </style>
+    <script src='http://maps.google.com/maps/api/js?sensor=false' type='text/javascript'></script>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function MandelMapType() {
+          this.tileSize = new google.maps.Size(256, 256);
+        }
+        
+        MandelMapType.prototype.getTile = function(coord, zoom, ownerDocument) {
+          var div = ownerDocument.createElement('IMG');
+          var w = Math.pow(2, zoom);
+          var x = coord.x % w;
+          if (x < 0) { x += w; }
+          var y = coord.y % w;
+          if (y < 0) { y += w; }
+          div.src = "http://m" + ((x + y) % 8) + ".mandelbrot.is.rly.gd/" + zoom + "/" + x + "/" + y;
+          div.style.width = div.style.height = '256px';
+          return div;
+        }
+        
+        function initialize() {
+          var options = {
+            zoom: 1,
+            center: new google.maps.LatLng(0, 0),
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+          };
+          var map = new google.maps.Map(document.getElementById("map_canvas"), options);
+          map.overlayMapTypes.insertAt(0, new MandelMapType());
+        }
+      //]]>
+    </script>
+  </head>
+  <body onload='initialize()'>
+    <div id='map_canvas'></div>
+  </body>
+</html>
